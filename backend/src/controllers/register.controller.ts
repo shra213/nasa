@@ -1,0 +1,184 @@
+import { sendOtpMail, generateOtp } from "./otplogic";
+import { saveOTP, getOTP, removeOTP, updateOtp } from "./otpStore";
+import { admin, auth } from "../db/index";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import { User } from "../db/models";
+// import { deleteFile } from "../routes/deleteFile";
+dotenv.config();
+import z from "zod";
+
+
+const secret = process.env.JWT_SECRET
+// Ensure .env loads here
+
+// =======================
+// ✅ Send OTP Controller
+// =======================
+const emailSchema = z.string().email();
+export const sendOtp = async (req: any, res: any) => {
+    try {
+        console.log("entered");
+        const { email, password } = req.body;
+
+        // Validate email
+        const suc = emailSchema.safeParse(email);
+        if (!suc.success) {
+            return res.status(404).json({ msg: "Give a valid email" });
+        }
+
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Please provide email and password' });
+        }
+
+        // Check if user already exists
+        try {
+            const userRecord = await auth.getUserByEmail(email);
+            if (userRecord) {
+                // console.log("error in deleting file");
+                return res.status(409).json({ message: "User already registered" });
+            }
+        } catch (err: any) {
+            // If error.code === 'auth/user-not-found', proceed to OTP
+            if (err.code !== 'auth/user-not-found') {
+                console.error("Firebase error:", err);
+                return res.status(500).json({ message: "Failed to check user" });
+            }
+        }
+
+        // Generate OTP
+        const otp = generateOtp();
+
+        // Save OTP and send mail
+        await saveOTP(email, String(otp), password);
+        await sendOtpMail(email, otp);
+
+        return res.status(200).json({ message: "OTP sent successfully" });
+
+    } catch (error) {
+        console.error("Error sending OTP:", error);
+        return res.status(500).json({ message: "Failed to send OTP" });
+    }
+};
+
+
+export const resendOtp = async (req: any, res: any) => {
+    try {
+        const email = req.body.email;
+        if (!email) {
+            return res.status(400).json({ message: 'Provide email and OTP' });
+        }
+
+        const otp = generateOtp();
+        const generated = updateOtp(email, String(otp));
+        console.log(generated);
+        if (!generated) {
+            return res.status(500).json({
+                msg: "otp cant be resend"
+            })
+        }
+
+        console.log(` ${email}  ${otp}`)
+        await sendOtpMail(email, otp);
+        return res.json(200).json({
+            msg: "otp sent successfully"
+        })
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            msg: e
+        })
+    }
+}
+// ==========================
+// ✅ Verify OTP & Create User
+// ==========================
+export const verifyOtp = async (req: any, res: any) => {
+    try {
+        const { email, otp: userOtp } = req.body;
+        const name = req.body.name ? req.body.name : "shraddha chaudhari";
+        const publicId = req.body.publicId || "";
+        const profileLink = req.body.profile || "";
+        // if (!publicId) {
+        //   return res.status(404).json({ msg: "publicId is not provided" });
+        // }
+        if (!email || !userOtp) {
+            return res.status(400).json({ message: 'Provide email and OTP' });
+        }
+        console.log(publicId, "publicId povided");
+        // console.log(profileLink, "publicId povided");
+
+        const record = getOTP(email);
+        console.log("Stored OTP Record:", record);
+
+        if (!record) {
+            return res.status(404).json({ message: "No OTP record found" });
+        }
+
+        const { otp, password, expiresAt } = record;
+
+        if (Date.now() > expiresAt) {
+            // deleteFile(publicId);
+            removeOTP(email);
+            return res.status(410).json({ message: "OTP expired" });
+        }
+
+        if (String(otp) !== String(userOtp)) {
+            return res.status(401).json({ message: "Invalid OTP" });
+        }
+        console.log("bef");
+
+        // Create Firebase user
+        console.log("Password Type:", typeof password, otp);
+
+        const user = await admin.auth().createUser({
+            email,
+            password,
+            emailVerified: true,
+        });
+
+        console.log("i am shraddhaaaa");
+
+        // Prepare MongoDB document
+        const newUser = new User({
+            uid: user.uid,           // Firebase UID
+            name,
+            email,
+            publicId: publicId,
+            photoURL: profileLink,    // equivalent of mediaUrl
+            birthdate: new Date("2005-01-01"),
+            createdAt: new Date(),    // timestamps will also handle createdAt automatically
+        });
+
+        // Save to MongoDB
+        await newUser.save();
+
+        console.log("User saved in MongoDB:", newUser);
+        if (!secret) {
+            return res.status(400).send("no jwt secret");
+        }
+
+
+        const token = jwt.sign(
+            { email, id: user.uid },
+            secret, // type-safe since we checked above
+            // { expiresIn: "1h" }
+        );
+        removeOTP(email); // Clear OTP after success
+
+        const options = {
+            httpOnly: true,
+            secure: true, // Set to true in production
+            // sameSite: 'Lax'
+        };
+
+        return res
+            .cookie('accessToken', token, options)
+            .status(201)
+            .json({ message: "User created successfully", newUser, token });
+    } catch (error) {
+        console.error("Error verifying OTP:", error);
+        return res.status(500).json({ message: "Failed to verify OTP or create user" });
+    }
+};
+

@@ -1,0 +1,78 @@
+45. Compare Caesar Cipher and Transposition Cipher.  
+46. Discuss advantages and disadvantages of symmetric and asymmetric cryptography. 
+47.  Write a short note on importance of keys in cryptographic systems. 
+48. Describe encryption and decryption in RSA with example. 
+49. Define: Plain text, Cipher text, Encryption, Decryption, Key.
+16. Define: Plain text, Cipher text, Encryption, Decryption, Key. 
+44. With diagram, explain components of a cryptosystem.  
+31. Explain Playfair Cipher and create matrix for keywords “Computer” and “Monarchy”. 
+Explain RSA algorithm with key generation, encryption, and decryption steps. 
+30. Explain substitution cipher with an example .Mention any three applications of 
+cryptography. 
+Explain algorithm for Caesar Cipher with example. 
+c) Differentiate between encryption and decryption
+20. Explain the Playfair Cipher method and create the matrix for the keywords “Computer” and 
+“Monarchy”.
+9.  With a neat diagram, explain the basic components of a cryptosystem.  
+Explain RSA algorithm with an example. Show step-by-step calculation for Plain text to 
+Cipher text conversion.   
+18. Compare Caesar Cipher and Transposition Cipher in terms of working and security. 
+17.  Explain symmetric key and asymmetric key cryptography with neat diagrams.
+
+
+
+
+
+
+6. With neat diagrams, explain Polar NRZ-Level, Polar NRZ-Inverted, and Polar RZ 
+schemes. 
+7. Describe the working of Manchester and Differential Manchester Encoding with suitable 
+waveforms. 
+8. What is Delta Modulation (DM)? Mention its main advantage.  
+9. Represent the data element 01011001 into Unipolar, NRZ-L, NRZ-I, RZ, Manchester and 
+Differential Manchester schemes and explain each representation. 
+10. Draw the PCM Decoder. Explain components of PCM Decoder.   
+23. Explain Polar Line Coding Scheme. List advantages and disadvantages. 
+25. Define Pulse Code Modulation (PCM). List the basic steps involved. 
+Define Digital Modulation. List any three types of digital modulation techniques. 
+26. For a message signal band-limited to 4 kHz, find the minimum sampling rate as per the 
+Nyquist theorem. 
+Draw a comparative chart showing PCM and Delta Modulation techniques. 
+34. What is Unipolar Line Coding? Draw waveform for 1011001 and mention two 
+advantages and disadvantages. 
+35. Define Line Coding. Explain encoding/decoding with block diagram and difference 
+between Data and Signal elements. 
+36.   State the Nyquist Sampling Theorem. 
+37. What is Delta Modulation (DM)? Mention its main advantage. 
+38. Draw and explain block diagram of PCM system. Mention noise sources. 
+39. Difference between Analog Modulation and Digital Modulation. 
+
+
+
+
+
+40. Types of errors with examples. Explain methods of error correction. 
+41. Explain Linear Block Code generation and parity-check matrix. 
+42. Determine minimum Hamming distance required to detect 2 errors and correct 1 error. 
+43. Write short notes on Single-bit and Burst Error Detection.  For dataword 1011 and 
+G(x)=x³+x+1, find CRC codeword. Design a (7,4) Hamming code and show how it 
+corrects a single-bit error. 
+27. Explain Cyclic Redundancy Check (CRC) with an example. 
+Describe redundancy and its role in error detection and correction mechanisms. 
+28. Explain Error Detection versus Correction with suitable example. 
+Calculate Hamming distance for: 
+10101 and 11110 
+10001001 and 10110001 
+29. What is Block Coding? Explain process of error detection and correction in Block 
+Coding. 
+30.  A bit stream 10011101 is transmitted using CRC with generator polynomial x³+1
+12. Describe redundancy and its role in error detection and correction mechanisms.  
+13. Define Hamming distance. Explain how minimum Hamming distance determines error 
+detection and correction capability.  
+14. 
+With neat diagrams, explain Linear Block Code generation and parity-check matrix. 
+Explain single-bit and burst errors with suitable examples. 
+15. Design a (7,4) Hamming code, show its encoding process, and demonstrate how it corrects a 
+single-bit error. For a given dataword 1011 and generator polynomial G(x)=x³+x+1, find the 
+CRC codeword. 
+
